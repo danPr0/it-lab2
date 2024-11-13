@@ -1,0 +1,9 @@
+Django
+psycopg
+psycopg-binary
+psycopg-pool
+# django_rest_framework
+djangorestframework
+djangorestframework-simplejwt
+django-allauth
+django-rest-auth
