@@ -1,5 +1,5 @@
 """
-URL configuration for lab1 project.
+URL configuration for sddkd project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-# from lab1_app.views import MyObtainTokenPairView, RegisterView
+# from sddkd_app.views import MyObtainTokenPairView, RegisterView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -29,5 +29,5 @@ urlpatterns = [
     # path('auth/login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('auth/register', RegisterView.as_view(), name='auth_register'),
 
-    path('lab1/', include('lab1_app.urls')),
+    path('sddkd/', include('sddkd_app.urls')),
 ]

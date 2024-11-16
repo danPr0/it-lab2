@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class Lab1AppConfig(AppConfig):
+class SddkdAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'lab1_app'
+    name = 'sddkd_app'
