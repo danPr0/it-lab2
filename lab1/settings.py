@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-yj8#gp1j2_-w2zyqt-%s!(90w@e7%3tk$86l9s!*4v9ukom8tp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get('DEBUG', default=1))
+DEBUG = 1
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -41,11 +41,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.postgres',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
 ]
 
 # REST_FRAMEWORK = {
@@ -61,17 +66,34 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
 }
 
+# djangorestframework-simplejwt
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # 'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    # 'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
+    # 'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
+    # 'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
+
+# dj-rest-auth
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': '_auth',
+    'JWT_AUTH_REFRESH_COOKIE': '_refresh',
+    'JWT_AUTH_HTTPONLY': False,
+    'REGISTER_SERIALIZER': 'lab1_app.serializers.CustomRegisterSerializer',
+}
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -81,6 +103,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'lab1.urls'
@@ -114,27 +138,27 @@ WSGI_APPLICATION = 'lab1.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'OPTIONS': {
-#             'service': 'my_service',
-#             # 'passfile': 'C:\\Users\\dan\\AppData\\Roaming\\postgresql\\pgpass.conf',
-#             'pool': True,
-#         },
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.environ.get('SQL_DATABASE', BASE_DIR / 'db.sqlite3'),
-        'USER': os.environ.get('SQL_USER', 'user'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD', 'password'),
-        'HOST': os.environ.get('SQL_HOST', 'localhost'),
-        'PORT': os.environ.get('SQL_PORT', '5432'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'OPTIONS': {
+            'service': 'my_service',
+            # 'passfile': 'C:\\Users\\dan\\AppData\\Roaming\\postgresql\\pgpass.conf',
+            'pool': True,
+        },
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.sqlite3'),
+#         'NAME': os.environ.get('SQL_DATABASE', BASE_DIR / 'db.sqlite3'),
+#         'USER': os.environ.get('SQL_USER', 'user'),
+#         'PASSWORD': os.environ.get('SQL_PASSWORD', 'password'),
+#         'HOST': os.environ.get('SQL_HOST', 'localhost'),
+#         'PORT': os.environ.get('SQL_PORT', '5432'),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -176,19 +200,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# User model customization
-AUTH_USER_MODEL = 'users.CustomUser'
-
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/?verification=1'
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
-
-SITE_ID = 1
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
